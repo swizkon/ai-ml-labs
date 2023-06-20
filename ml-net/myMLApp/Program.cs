@@ -18,6 +18,6 @@ while (text != "q")
     // If Prediction is 1, sentiment is "Positive"; otherwise, sentiment is "Negative"
     var sentiment = result.PredictedLabel == 1 ? "Positive" : "Negative";
     Console.WriteLine($"Text: {sampleData.Col0}\nSentiment: {sentiment}");
-    Console.WriteLine($"{"-", -20}");
-
+    Console.WriteLine($" Score: {result.Score}");
+    Console.WriteLine($"");
 }

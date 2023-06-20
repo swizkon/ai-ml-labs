@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ML.Data;
+using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Trainers;
 using Microsoft.ML;
 
@@ -13,7 +14,7 @@ namespace MyMLApp
 {
     public partial class SentimentModel
     {
-        public const string RetrainFilePath =  @"C:\dev\github\swizkon\ai-ml-labs\ml-net\myMLApp\myMLApp\myMLApp\yelp_labelled.txt";
+        public const string RetrainFilePath =  @"C:\dev\github\swizkon\ai-ml-labs\ml-net\myMLApp\yelp_labelled.txt";
         public const char RetrainSeparatorChar = '	';
         public const bool RetrainHasHeader =  false;
 
@@ -91,7 +92,7 @@ namespace MyMLApp
             var pipeline = mlContext.Transforms.Text.FeaturizeText(inputColumnName:@"col0",outputColumnName:@"col0")      
                                     .Append(mlContext.Transforms.Concatenate(@"Features", new []{@"col0"}))      
                                     .Append(mlContext.Transforms.Conversion.MapValueToKey(outputColumnName:@"col1",inputColumnName:@"col1",addKeyValueAnnotationsAsText:false))      
-                                    .Append(mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy(new LbfgsMaximumEntropyMulticlassTrainer.Options(){L1Regularization=0.04415967F,L2Regularization=0.03125F,LabelColumnName=@"col1",FeatureColumnName=@"Features"}))      
+                                    .Append(mlContext.MulticlassClassification.Trainers.OneVersusAll(binaryEstimator:mlContext.BinaryClassification.Trainers.FastTree(new FastTreeBinaryTrainer.Options(){NumberOfLeaves=4,MinimumExampleCountPerLeaf=14,NumberOfTrees=20,MaximumBinCountPerFeature=167,FeatureFraction=0.99999999,LearningRate=0.999999776672986,LabelColumnName=@"col1",FeatureColumnName=@"Features",DiskTranspose=false}),labelColumnName: @"col1"))      
                                     .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName:@"PredictedLabel",inputColumnName:@"PredictedLabel"));
 
             return pipeline;
